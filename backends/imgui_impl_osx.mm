@@ -17,6 +17,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #import "imgui.h"
+#ifndef IMGUI_DISABLE
 #import "imgui_impl_osx.h"
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
@@ -477,7 +478,6 @@ void ImGui_ImplOSX_Shutdown()
 {
     ImGui_ImplOSX_Data* bd = ImGui_ImplOSX_GetBackendData();
     IM_ASSERT(bd != nullptr && "No platform backend to shutdown, or already shutdown?");
-    ImGuiIO& io = ImGui::GetIO();
 
     bd->Observer = nullptr;
     if (bd->Monitor != nullptr)
@@ -486,10 +486,12 @@ void ImGui_ImplOSX_Shutdown()
         bd->Monitor = nullptr;
     }
 
+    ImGui_ImplOSX_DestroyBackendData();
+
+    ImGuiIO& io = ImGui::GetIO();
     io.BackendPlatformName = nullptr;
     io.BackendPlatformUserData = nullptr;
     io.BackendFlags &= ~(ImGuiBackendFlags_HasMouseCursors | ImGuiBackendFlags_HasGamepad);
-    ImGui_ImplOSX_DestroyBackendData();
 }
 
 static void ImGui_ImplOSX_UpdateMouseCursor()
@@ -800,3 +802,7 @@ static void ImGui_ImplOSX_AddTrackingArea(NSView* _Nonnull view)
         return event;
     }];
 }
+
+//-----------------------------------------------------------------------------
+
+#endif // #ifndef IMGUI_DISABLE
